@@ -23,6 +23,8 @@
 
 3. Change the configuration from the 'config.yml' file if neccessary
 
+4. Add your static site in the `docs/` folder
+
 ## Licence
 
 [MIT](https://github.com/KDesp73/Ruby-Web-Server/blob/main/LICENSE)

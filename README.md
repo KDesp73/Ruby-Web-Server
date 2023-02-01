@@ -21,7 +21,7 @@
     ```
     The server is now running on localhost:2000
 
-3. Change the configuration from the 'config.yml' file
+3. Change the configuration from the 'config.yml' file if neccessary
 
 ## Licence
 

@@ -13,12 +13,12 @@ server = TCPServer.new ip, port
 puts "Listening on port #{port}..."
 
 def route(request)
-    if !File.exists?(File.join(__dir__, @site_folder, "index.html"))
-        render("index.html", @system_folder)
+    if request.path == "/" && !File.exists?(File.join(__dir__, @site_folder, "index.html"))
+        render "index.html", @system_folder 
     elsif request.path == "/"
         render "index.html"
     elsif !File.exists?(File.join(__dir__, @site_folder, request.path))
-        render("404.html", @system_folder)
+        render "404.html", @system_folder
     else
         render request.path
     end

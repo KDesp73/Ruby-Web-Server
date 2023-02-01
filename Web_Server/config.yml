@@ -1,0 +1,5 @@
+ip: localhost
+
+# Should range between 1024 and 49151
+port: 2000
+

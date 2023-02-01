@@ -1,5 +1,6 @@
 require "socket"
 require "active_support/all"
+require "yaml"
 
 require_relative "request"
 require_relative "response"
@@ -57,8 +58,10 @@ class Server
 end
 
 
-port = ENV.fetch("PORT", 2000).to_i
-ip = "localhost"
+config = YAML.load_file "config.yml" 
+
+port = ENV.fetch("PORT", config['port']).to_i
+ip = config['ip']
 server = Server.new(ip, port)
 
 

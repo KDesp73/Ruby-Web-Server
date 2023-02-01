@@ -4,6 +4,8 @@
 
 *It can host static websites*
 
+![server index](https://user-images.githubusercontent.com/63654361/216193816-2339c02c-e8d8-484f-b814-49acda5381f3.png)
+
 ## How to use it
 
 1. Clone this repository
@@ -21,3 +23,6 @@
 
 3. Change the configuration from the 'config.yml' file
 
+## Licence
+
+[MIT](https://github.com/KDesp73/Ruby-Web-Server/blob/main/LICENSE)

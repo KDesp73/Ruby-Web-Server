@@ -63,7 +63,7 @@ class Server
         elsif request.path == "/"
             render "index.html"
         elsif !File.exists?(File.join(__dir__, @site_folder, request.path))
-            render "404.html", @system_folder
+            render_404
         else
             render request.path
         end
@@ -78,6 +78,33 @@ class Server
         else
             Response.new(code: 404, body: File.binread(full_path))
         end
+    end
+
+    private 
+
+    def render_404
+        htaccess_path = File.join(__dir__, @site_folder, ".htaccess")
+        if File.exists?(htaccess_path)
+            htaccess_content = File.binread(htaccess_path)
+            pagenotfound = htaccess_content.slice(htaccess_content.index("ErrorDocument 404") + "ErrorDocument 404".length + 1, htaccess_content.length-1)
+
+            if(File.exists?(File.join(__dir__, @site_folder, pagenotfound)))    # check if said file exists
+                render pagenotfound
+            end
+        else
+            render "404.html", @system_folder
+        end
+    end
+
+    private
+
+    def get_404_file(folder)
+        htaccess_path = File.join(__dir__, folder, ".htaccess")
+        if File.exists?(htaccess_path)
+            htaccess_content = File.binread(htaccess_path)
+            pagenotfound = htaccess_content.slice(htaccess_content.index("ErrorDocument 404") + "ErrorDocument 404".length + 1, htaccess_content.length-1)
+        end
+        return pagenotfound
     end
 end
 

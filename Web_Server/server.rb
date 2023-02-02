@@ -30,7 +30,7 @@ require_relative "request"
 require_relative "response"
 
 class Server
-    attr_reader :port, :ip, :site_folder, :system_folder
+    attr_reader :port, :ip
 
     def initialize(ip, port)
         @ip = ip
@@ -63,7 +63,7 @@ class Server
         elsif request.path == "/"
             render "index.html"
         elsif !File.exists?(File.join(__dir__, @site_folder, request.path))
-            render_404
+            render_404  # checking for user-added .htaccess file
         else
             render request.path
         end
@@ -76,7 +76,7 @@ class Server
         if File.exists?(full_path)
             Response.new(code: 200, body: File.binread(full_path))
         else
-            Response.new(code: 404, body: File.binread(full_path))
+            Response.new code: 404
         end
     end
 
@@ -94,17 +94,6 @@ class Server
         else
             render "404.html", @system_folder
         end
-    end
-
-    private
-
-    def get_404_file(folder)
-        htaccess_path = File.join(__dir__, folder, ".htaccess")
-        if File.exists?(htaccess_path)
-            htaccess_content = File.binread(htaccess_path)
-            pagenotfound = htaccess_content.slice(htaccess_content.index("ErrorDocument 404") + "ErrorDocument 404".length + 1, htaccess_content.length-1)
-        end
-        return pagenotfound
     end
 end
 

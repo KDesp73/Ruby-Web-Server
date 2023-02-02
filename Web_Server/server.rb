@@ -62,8 +62,6 @@ class Server
             render "index.html", @system_folder 
         elsif request.path == "/"
             render "index.html"
-        elsif !File.exists?(File.join(__dir__, @site_folder, request.path))
-            render_404  # checking for user-added .htaccess file
         else
             render request.path
         end
@@ -74,9 +72,19 @@ class Server
     def render(filename, folder = @site_folder)
         full_path = File.join(__dir__, folder, filename)
         if File.exists?(full_path)
-            Response.new(code: 200, body: File.binread(full_path))
+            Response.new(code: 200, body: File.binread(full_path), headers: {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => "KDesp73 Server/1.0.1 (Ruby)", "Content-Type" => "text/html; charset=UTF-8"})
         else
-            Response.new code: 404
+            htaccess_path = File.join(__dir__, @site_folder, ".htaccess")
+            if File.exists?(htaccess_path)
+                htaccess_content = File.binread(htaccess_path)
+                pagenotfound = htaccess_content.slice(htaccess_content.index("ErrorDocument 404") + "ErrorDocument 404".length + 1, htaccess_content.length-1)
+
+                if(File.exists?(File.join(__dir__, @site_folder, pagenotfound)))    # check if said file exists
+                    Response.new(code: 404, body: File.binread(File.join(__dir__, @site_folder, pagenotfound)), headers: {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => "KDesp73 Server/1.0.1 (Ruby)", "Content-Type" => "text/html; charset=UTF-8"})
+                end
+            else
+                Response.new(code: 404, body: File.binread(File.join(__dir__, @system_folder, "404.html")), headers: {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => "KDesp73 Server/1.0.1 (Ruby)", "Content-Type" => "text/html; charset=UTF-8"})
+            end
         end
     end
 

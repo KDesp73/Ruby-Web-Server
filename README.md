@@ -6,6 +6,10 @@
 
 ![server index](https://user-images.githubusercontent.com/63654361/216193983-89083007-d1aa-44f4-b711-60ef24be02ec.png)
 
+## Requirements
+
+* Ruby 3.0.0 minimum
+
 ## How to use it
 
 1. Clone this repository
@@ -24,8 +28,6 @@
     The server is now running on localhost:2000
 
 4. Change the configuration from the 'config.yml' file if neccessary
-
-
 
 ## Licence
 

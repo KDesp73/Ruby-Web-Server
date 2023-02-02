@@ -29,6 +29,8 @@ require "yaml"
 require_relative "request"
 require_relative "response"
 
+$config = YAML.load_file "config.yml" 
+
 class Server
     attr_reader :port, :ip
 
@@ -70,46 +72,42 @@ class Server
     private
 
     def render(filename, folder = @site_folder)
+        http_headers = {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => $config['server_name'], "Content-Type" => $config['content_type']}
         full_path = File.join(__dir__, folder, filename)
         if File.exists?(full_path)
-            Response.new(code: 200, body: File.binread(full_path), headers: {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => "KDesp73 Server/1.0.1 (Ruby)", "Content-Type" => "text/html; charset=UTF-8"})
+            Response.new(code: 200, body: File.binread(full_path), headers: http_headers)
         else
             htaccess_path = File.join(__dir__, @site_folder, ".htaccess")
-            if File.exists?(htaccess_path)
-                htaccess_content = File.binread(htaccess_path)
-                pagenotfound = htaccess_content.slice(htaccess_content.index("ErrorDocument 404") + "ErrorDocument 404".length + 1, htaccess_content.length-1)
-
-                if(File.exists?(File.join(__dir__, @site_folder, pagenotfound)))    # check if said file exists
-                    Response.new(code: 404, body: File.binread(File.join(__dir__, @site_folder, pagenotfound)), headers: {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => "KDesp73 Server/1.0.1 (Ruby)", "Content-Type" => "text/html; charset=UTF-8"})
-                end
+            
+            if htaccess_exists?(htaccess_path)[0]
+                Response.new(code: 404, body: File.binread(File.join(__dir__, @site_folder, htaccess_exists?(htaccess_path)[1])), headers: http_headers)
             else
-                Response.new(code: 404, body: File.binread(File.join(__dir__, @system_folder, "404.html")), headers: {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => "KDesp73 Server/1.0.1 (Ruby)", "Content-Type" => "text/html; charset=UTF-8"})
+                Response.new(code: 404, body: File.binread(File.join(__dir__, @system_folder, "404.html")), headers: http_headers)
             end
         end
     end
 
     private 
 
-    def render_404
-        htaccess_path = File.join(__dir__, @site_folder, ".htaccess")
+    def htaccess_exists?(htaccess_path)
         if File.exists?(htaccess_path)
             htaccess_content = File.binread(htaccess_path)
             pagenotfound = htaccess_content.slice(htaccess_content.index("ErrorDocument 404") + "ErrorDocument 404".length + 1, htaccess_content.length-1)
 
             if(File.exists?(File.join(__dir__, @site_folder, pagenotfound)))    # check if said file exists
-                render pagenotfound
+                return true, pagenotfound
             end
         else
-            render "404.html", @system_folder
+            return false
         end
     end
 end
 
 
-config = YAML.load_file "config.yml" 
 
-port = ENV.fetch("PORT", config['port']).to_i
-ip = config['ip']
+
+port = ENV.fetch("PORT", $config['port']).to_i
+ip = $config['ip']
 server = Server.new(ip, port)
 
 

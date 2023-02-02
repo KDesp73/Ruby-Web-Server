@@ -38,5 +38,7 @@ class Response
         end
         client.print "\r\n"
         client.print @body if @body.present?
+
+        puts "\r\n\r\n#{@body}\r\n\r\n" if @body.present?
     end
 end

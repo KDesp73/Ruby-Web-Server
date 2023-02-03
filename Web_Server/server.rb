@@ -74,11 +74,12 @@ class Server
     def render(filename, folder = @site_folder)
         http_headers = {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => $config['server_name'], "Content-Type" => $config['content_type']}
         full_path = File.join(__dir__, folder, filename)
+
         if File.exists?(full_path)
             Response.new(code: 200, body: File.binread(full_path), headers: http_headers)
         else
             htaccess_path = File.join(__dir__, @site_folder, ".htaccess")
-            
+
             if htaccess_exists?(htaccess_path)
                 Response.new(code: 404, body: File.binread(File.join(__dir__, @site_folder, get_404_page)), headers: http_headers)
             else
@@ -99,6 +100,8 @@ class Server
     private
 
     def get_404_page
+        htaccess_path = File.join(__dir__, @site_folder, ".htaccess")
+
         htaccess_content = File.binread(htaccess_path)
         pagenotfound = htaccess_content.slice(htaccess_content.index("ErrorDocument 404") + "ErrorDocument 404".length + 1, htaccess_content.length-1)
         

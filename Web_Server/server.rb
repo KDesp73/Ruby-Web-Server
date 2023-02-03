@@ -37,12 +37,12 @@ class Server
     def initialize(ip, port)
         @ip = ip
         @port = port
-
         @server = TCPServer.new ip, port    # not readable
-
         @site_folder = "docs"
         @system_folder = "utils"
+    end
 
+    def run 
         puts "Listening on port #{port}..."
 
         loop do
@@ -61,7 +61,7 @@ class Server
     
     def route(request)
         if request.path == "/" && !File.exists?(File.join(__dir__, @site_folder, "index.html"))     #load system's index.html if user's doesn't exist
-            render "index.html", @system_folder 
+            render @system_folder, "index.html" 
         elsif request.path == "/"
             render "index.html"
         else
@@ -71,7 +71,7 @@ class Server
 
     private
 
-    def render(filename, folder = @site_folder)
+    def render(folder = @site_folder, filename)
         http_headers = {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => $config['server_name'], "Content-Type" => $config['content_type']}
         full_path = File.join(__dir__, folder, filename)
 
@@ -115,6 +115,7 @@ end
 port = ENV.fetch("PORT", $config['port']).to_i
 ip = $config['ip']
 server = Server.new(ip, port)
+server.run
 
 
 

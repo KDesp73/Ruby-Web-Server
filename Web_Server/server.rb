@@ -90,15 +90,10 @@ class Server
     private 
 
     def htaccess_exists?(htaccess_path)
-        if File.exists?(htaccess_path)
-            
-
-            if(File.exists?(File.join(__dir__, @site_folder, get_404_page)))    # check if said file exists
-                return true
-            end
-        else
-            return false
-        end
+        return false if !File.exists?(htaccess_path)
+        return false if !File.exists?(File.join(__dir__, @site_folder, get_404_page))    
+                
+        return true
     end
 
     private

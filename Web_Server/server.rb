@@ -79,8 +79,8 @@ class Server
         else
             htaccess_path = File.join(__dir__, @site_folder, ".htaccess")
             
-            if htaccess_exists?(htaccess_path)[0]
-                Response.new(code: 404, body: File.binread(File.join(__dir__, @site_folder, htaccess_exists?(htaccess_path)[1])), headers: http_headers)
+            if htaccess_exists?(htaccess_path)
+                Response.new(code: 404, body: File.binread(File.join(__dir__, @site_folder, get_404_page)), headers: http_headers)
             else
                 Response.new(code: 404, body: File.binread(File.join(__dir__, @system_folder, "404.html")), headers: http_headers)
             end
@@ -91,15 +91,21 @@ class Server
 
     def htaccess_exists?(htaccess_path)
         if File.exists?(htaccess_path)
-            htaccess_content = File.binread(htaccess_path)
-            pagenotfound = htaccess_content.slice(htaccess_content.index("ErrorDocument 404") + "ErrorDocument 404".length + 1, htaccess_content.length-1)
+            
 
-            if(File.exists?(File.join(__dir__, @site_folder, pagenotfound)))    # check if said file exists
-                return true, pagenotfound
+            if(File.exists?(File.join(__dir__, @site_folder, get_404_page)))    # check if said file exists
+                return true
             end
         else
             return false
         end
+    end
+
+    def get_404_page
+        htaccess_content = File.binread(htaccess_path)
+        pagenotfound = htaccess_content.slice(htaccess_content.index("ErrorDocument 404") + "ErrorDocument 404".length + 1, htaccess_content.length-1)
+        
+        return pagenotfound
     end
 end
 

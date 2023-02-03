@@ -101,6 +101,8 @@ class Server
         end
     end
 
+    private
+
     def get_404_page
         htaccess_content = File.binread(htaccess_path)
         pagenotfound = htaccess_content.slice(htaccess_content.index("ErrorDocument 404") + "ErrorDocument 404".length + 1, htaccess_content.length-1)

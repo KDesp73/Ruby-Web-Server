@@ -45,8 +45,6 @@ class Response
 
     def match_status_message(code)
         messages = YAML.load_file "status_messages.yml"
-
-        puts "Status message: #{messages[code]}"
         return messages[code]
     end 
 end

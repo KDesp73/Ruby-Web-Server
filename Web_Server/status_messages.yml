@@ -3,7 +3,7 @@
 # 1xx
 101: Switching Protocols
 102: Processing
-103: Early Hints (RFC 8297)
+103: Early Hints
 
 # 2xx
 200: OK

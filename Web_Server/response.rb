@@ -21,6 +21,8 @@
 # SOFTWARE.
 
 
+require "yaml"
+
 class Response
     def initialize(code:, body: "", headers: {})
         @code = code
@@ -29,7 +31,7 @@ class Response
     end
   
     def send(client)
-        client.print "HTTP/1.1 #{@code}\r\n"
+        client.print "HTTP/1.1 #{@code} #{match_status_message(@code)}\r\n"
         @headers.each do |name, value|
             client.print "#{name}: #{value}\r\n"
         end
@@ -38,4 +40,13 @@ class Response
 
         puts "->#{@code}\r\n"
     end
+
+    private
+
+    def match_status_message(code)
+        messages = YAML.load_file "status_messages.yml"
+
+        puts "Status message: #{messages[code]}"
+        return messages[code]
+    end 
 end

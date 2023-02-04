@@ -72,13 +72,14 @@ class Server
     private
 
     def render(folder = @site_folder, filename)
-        puts filename
-        http_headers = {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => $config['server_name'], "Content-Type" => $config['content_type']} # headers according to http protocol
+        # headers according to the http protocol
+        http_headers = {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => $config['server_name'], "Content-Type" => $config['content_type']}
         full_path = File.join(__dir__, folder, filename)
 
         if File.exists?(full_path)
             body = File.binread(full_path)
             http_headers.merge!("Content-Length" => body.length)
+
             Response.new(code: 200, body: body, headers: http_headers)
         else
             htaccess_path = File.join(__dir__, @site_folder, ".htaccess")
@@ -86,10 +87,12 @@ class Server
             if htaccess_exists?(htaccess_path)
                 body = File.binread(File.join(__dir__, @site_folder, get_404_page))
                 http_headers.merge!("Content-Length" => body.length)
+
                 Response.new(code: 404, body: body, headers: http_headers)
             else
                 body = File.binread(File.join(__dir__, @system_folder, "404.html"))
                 http_headers.merge!("Content-Length" => body.length)
+
                 Response.new(code: 404, body: body, headers: http_headers)
             end
         end

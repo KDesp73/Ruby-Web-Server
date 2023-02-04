@@ -72,18 +72,24 @@ class Server
     private
 
     def render(folder = @site_folder, filename)
-        http_headers = {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => $config['server_name'], "Content-Type" => $config['content_type']}
+        http_headers = {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => $config['server_name'], "Content-Type" => $config['content_type']} # headers according to http protocol
         full_path = File.join(__dir__, folder, filename)
 
         if File.exists?(full_path)
-            Response.new(code: 200, body: File.binread(full_path), headers: http_headers)
+            body = File.binread(full_path)
+            http_headers.merge!("Content-Length" => body.length)
+            Response.new(code: 200, body: body, headers: http_headers)
         else
             htaccess_path = File.join(__dir__, @site_folder, ".htaccess")
 
             if htaccess_exists?(htaccess_path)
-                Response.new(code: 404, body: File.binread(File.join(__dir__, @site_folder, get_404_page)), headers: http_headers)
+                body = File.binread(File.join(__dir__, @site_folder, get_404_page))
+                http_headers.merge!("Content-Length" => body.length)
+                Response.new(code: 404, body: body, headers: http_headers)
             else
-                Response.new(code: 404, body: File.binread(File.join(__dir__, @system_folder, "404.html")), headers: http_headers)
+                body = File.binread(File.join(__dir__, @system_folder, "404.html"))
+                http_headers.merge!("Content-Length" => body.length)
+                Response.new(code: 404, body: body, headers: http_headers)
             end
         end
     end
@@ -110,19 +116,7 @@ class Server
 end
 
 
-
-
 port = ENV.fetch("PORT", $config['port']).to_i
 ip = $config['ip']
 server = Server.new(ip, port)
 server.run
-
-
-
-
-
-
-
-
-
-

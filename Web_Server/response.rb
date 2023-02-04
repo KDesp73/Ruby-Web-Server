@@ -29,16 +29,13 @@ class Response
     end
   
     def send(client)
-        puts "->\r\n"
         client.print "HTTP/1.1 #{@code}\r\n"
-        puts "HTTP/1.1 #{@code}\r\n"
         @headers.each do |name, value|
             client.print "#{name}: #{value}\r\n"
-            puts "#{name}: #{value}\r\n"
         end
         client.print "\r\n"
         client.print @body if @body.present?
 
-        puts "\r\n\r\n#{@body}\r\n\r\n" if @body.present?
+        puts "->#{@code}\r\n"
     end
 end

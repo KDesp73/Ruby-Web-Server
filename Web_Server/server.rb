@@ -72,6 +72,7 @@ class Server
     private
 
     def render(folder = @site_folder, filename)
+        puts filename
         http_headers = {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => $config['server_name'], "Content-Type" => $config['content_type']} # headers according to http protocol
         full_path = File.join(__dir__, folder, filename)
 

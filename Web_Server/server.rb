@@ -62,6 +62,8 @@ class Server
     def route(request)
         if request.path == "/" && !File.exists?(File.join(__dir__, @site_folder, "index.html"))     #load system's index.html if user's doesn't exist
             render @system_folder, "index.html" 
+        elsif request.path == "favicon.ico" && !File.exists?(File.join(__dir__, @site_folder, "favicon.ico"))
+            render @system_folder, "favicon.ico"
         elsif request.path == "/"
             render "index.html"
         else
@@ -73,28 +75,31 @@ class Server
 
     def render(folder = @site_folder, filename)
         # headers according to the http protocol
-        http_headers = {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => $config['server_name'], "Content-Type" => $config['content_type']}
+        http_headers = {"Date" => "#{Time.utc(*Time.new.to_a)}","Server" => $config['server_name']}
         full_path = File.join(__dir__, folder, filename)
 
         if File.exists?(full_path)
             body = File.binread(full_path)
+            http_headers.merge!("Content-Type" => getExt(filename))            
             http_headers.merge!("Content-Length" => body.length)
 
             Response.new(code: 200, body: body, headers: http_headers)
         else
             htaccess_path = File.join(__dir__, @site_folder, ".htaccess")
 
+            
             if htaccess_exists?(htaccess_path)
                 body = File.binread(File.join(__dir__, @site_folder, get_404_page))
                 http_headers.merge!("Content-Length" => body.length)
-
+                
                 Response.new(code: 404, body: body, headers: http_headers)
             else
                 body = File.binread(File.join(__dir__, @system_folder, "404.html"))
                 http_headers.merge!("Content-Length" => body.length)
-
+                
                 Response.new(code: 404, body: body, headers: http_headers)
             end
+            
         end
     end
 
@@ -116,6 +121,23 @@ class Server
         pagenotfound = htaccess_content.slice(htaccess_content.index("ErrorDocument 404") + "ErrorDocument 404".length + 1, htaccess_content.length-1)
         
         return pagenotfound
+    end
+
+    private 
+
+    def getExt(file)
+        return "text/html" if(File.extname(file) == ".html")
+        return "text/css" if(File.extname(file) == ".css")
+        return "text/javascript" if(File.extname(file) == ".js")
+
+        return "image/svg+xml" if(File.extname(file) == ".svg")
+        return "image/jpeg" if(File.extname(file) == ".jpg")
+        return "image/png" if(File.extname(file) == ".png")
+        return "image/x-icon" if(File.extname(file) == ".ico")
+        
+        return "font/ttf" if(File.extname(file) == ".ttf")
+
+        return "video/mp4" if(File.extname(file == ".mp4"))
     end
 end
 

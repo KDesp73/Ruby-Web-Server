@@ -8,7 +8,7 @@
 
 ## Requirements
 
-* Ruby 3.0.0 minimum
+* Ruby 2.7.0 minimum
 
 ## How to use it
 

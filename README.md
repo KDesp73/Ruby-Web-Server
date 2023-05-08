@@ -8,7 +8,7 @@
 
 ## Requirements
 
-* Ruby 3.0.0 minimum
+* Ruby 2.7.0 minimum
 
 ## How to use it
 
@@ -25,11 +25,40 @@
 4. In selected directory run: 
 
     ```bash
-    ruby ./server.rb
+    ruby ./run.rb
     ```
     The server is now running on localhost:2000
 
 5. Change the configuration from the 'config.yml' file if necessary
+
+## File Tree
+
+
+```
+.
+├── LICENSE
+├── README.md
+└── Web_Server
+    ├── config.yml
+    ├── docs
+    │   ├── food.js
+    │   ├── index1.html
+    │   ├── index_.html
+    │   ├── script.js
+    │   └── style.css
+    ├── Gemfile
+    ├── Gemfile.lock
+    ├── run.rb
+    └── src
+        ├── request.rb
+        ├── response.rb
+        ├── server.rb
+        ├── status_messages.yml
+        └── utils
+            ├── 404.html
+            ├── favicon.ico
+            └── index.html
+```
 
 ## Licence
 

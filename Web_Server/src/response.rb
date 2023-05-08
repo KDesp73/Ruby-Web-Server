@@ -44,7 +44,7 @@ class Response
     private
 
     def match_status_message(code)
-        messages = YAML.load_file "status_messages.yml"
+        messages = YAML.load_file File.expand_path("../status_messages.yml", __FILE__)
         return messages[code]
     end 
 end

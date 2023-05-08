@@ -29,7 +29,8 @@ require "yaml"
 require_relative "request"
 require_relative "response"
 
-$config = YAML.load_file "config.yml" 
+
+$config = YAML.load_file File.expand_path("../../config.yml", __FILE__)
 
 class Server
     attr_reader :port, :ip
@@ -140,9 +141,3 @@ class Server
         return "video/mp4" if(File.extname(file == ".mp4"))
     end
 end
-
-
-port = ENV.fetch("PORT", $config['port']).to_i
-ip = $config['ip']
-server = Server.new(ip, port)
-server.run

@@ -42,7 +42,6 @@
     ├── config.yml
     ├── docs/
     ├── Gemfile
-    ├── Gemfile.lock
     ├── run.rb
     └── src/
         ├── request.rb

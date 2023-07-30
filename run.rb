@@ -7,7 +7,7 @@ require "active_support/all"
 
 require_relative "src/server"
 
-$config = YAML.load_file "config.yml"
+$config = YAML.load_file File.join(__dir__, "config.yml")
 
 port = ENV.fetch("PORT", $config['port']).to_i
 ip = $config['ip']

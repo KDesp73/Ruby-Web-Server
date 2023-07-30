@@ -40,7 +40,7 @@ class Server
     @port = port
     @server = TCPServer.new ip, port    # not readable
     @site_folder = folder
-    @system_folder = File.join(__dir__, "utils")
+    @system_folder = File.expand_path("../utils", __dir__)
   end
 
   def run 

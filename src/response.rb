@@ -38,7 +38,7 @@ class Response
         client.print "\r\n"
         client.print @body if @body.present?
 
-        puts "->#{@code}\r\n"
+        puts "-> #{@code}\r\n"
     end
 
     private

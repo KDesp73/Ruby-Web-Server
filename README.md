@@ -38,17 +38,23 @@
 .
 ├── LICENSE
 ├── README.md
-└── Web_Server/
+└── Web_Server
     ├── config.yml
-    ├── docs/
+    ├── docs
+    │   ├── food.js
+    │   ├── index1.html
+    │   ├── index_.html
+    │   ├── script.js
+    │   └── style.css
     ├── Gemfile
+    ├── Gemfile.lock
     ├── run.rb
-    └── src/
+    └── src
         ├── request.rb
         ├── response.rb
         ├── server.rb
         ├── status_messages.yml
-        └── utils/
+        └── utils
             ├── 404.html
             ├── favicon.ico
             └── index.html

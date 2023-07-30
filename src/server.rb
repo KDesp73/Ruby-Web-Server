@@ -28,6 +28,7 @@ require "yaml"
 
 require_relative "request"
 require_relative "response"
+require_relative "print"
 
 
 $config = YAML.load_file File.expand_path("../../config.yml", __FILE__)
@@ -44,33 +45,37 @@ class Server
   end
 
   def run 
-    puts "\nSite directory: #{@site_folder}"
-      puts "Listening on port #{port}...\n"
-
+    print_on_start        
     loop do
-      Thread.start(@server.accept) do |client|
-        request = Request.new client.readpartial(2048)
+        Thread.start(@server.accept) do |client|
+          begin
+            request = Request.new client.readpartial(2048)
+          rescue EOFError
+            request = nil
+          end
 
-        response = route(request)
-        response.send(client)
+          response = route(request)
+          response.send(client)
 
-        client.close
+          client.close
+        end
       end
-    end
   end
 
   private
 
   def route(request)
-      if request.path == "/" && !File.exists?(File.join(@site_folder, "index.html"))     #load system's index.html if user's doesn't exist
-        render @system_folder, "index.html" 
-      elsif request.path == "favicon.ico" && !File.exists?(File.join(@site_folder, "favicon.ico"))
-        render @system_folder, "favicon.ico"
-      elsif request.path == "/"
-        render "index.html"
-      else
-        render request.path
-      end
+    return if request == nil
+
+    if request.path == "/" && !File.exists?(File.join(@site_folder, "index.html"))     #load system's index.html if user's doesn't exist
+      render @system_folder, "index.html" 
+    elsif request.path == "favicon.ico" && !File.exists?(File.join(@site_folder, "favicon.ico"))
+      render @system_folder, "favicon.ico"
+    elsif request.path == "/"
+      render "index.html"
+    else
+      render request.path
+    end
   end
 
   private

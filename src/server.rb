@@ -44,7 +44,7 @@ class Server
   end
 
   def run 
-    puts "\nSite running: #{@site_folder}"
+    puts "\nSite directory: #{@site_folder}"
       puts "Listening on port #{port}...\n"
 
     loop do
@@ -62,7 +62,6 @@ class Server
   private
 
   def route(request)
-    puts "Here: #{File.join(@site_folder, "index.html")}"
       if request.path == "/" && !File.exists?(File.join(@site_folder, "index.html"))     #load system's index.html if user's doesn't exist
         render @system_folder, "index.html" 
       elsif request.path == "favicon.ico" && !File.exists?(File.join(@site_folder, "favicon.ico"))

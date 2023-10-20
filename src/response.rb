@@ -1,17 +1,17 @@
 # MIT License
-# 
+#
 # Copyright (c) 2023 Konstantinos Despoinidis
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,31 +20,32 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+require 'yaml'
 
-require "yaml"
+DEBUG = false
 
 class Response
-    def initialize(code:, body: "", headers: {})
-        @code = code
-        @body = body
-        @headers = headers
+  def initialize(code:, body: '', headers: {})
+    @code = code
+    @body = body
+    @headers = headers
+  end
+
+  def send(client)
+    client.print "HTTP/1.1 #{@code} #{match_status_message(@code)}\r\n"
+    @headers.each do |name, value|
+      client.print "#{name}: #{value}\r\n"
     end
-  
-    def send(client)
-        client.print "HTTP/1.1 #{@code} #{match_status_message(@code)}\r\n"
-        @headers.each do |name, value|
-            client.print "#{name}: #{value}\r\n"
-        end
-        client.print "\r\n"
-        client.print @body if @body.present?
+    client.print "\r\n"
+    client.print @body if @body.present?
 
-        puts "-> #{@code}\r\n"
-    end
+    puts "-> #{@code}\r\n" if DEBUG
+  end
 
-    private
+  private
 
-    def match_status_message(code)
-        messages = YAML.load_file File.expand_path("../status_messages.yml", __FILE__)
-        return messages[code]
-    end 
+  def match_status_message(code)
+    messages = YAML.load_file File.expand_path('../status_messages.yml', __FILE__)
+    messages[code]
+  end
 end
